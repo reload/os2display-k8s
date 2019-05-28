@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: screen
+  labels:
+    app: screen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: screen
+  template:
+    metadata:
+      labels:
+        app: screen
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/screen/configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+      - name: screen
+        image: {{ .Values.images.screen.image }}:{{ .Values.images.screen.tag }}
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: screen-config
+          mountPath: /var/www/screen/app/config.js
+          subPath: config.js
+        ports:
+        - name: main-port
+          containerPort: 80
+      volumes:
+        - name: screen-config
+          configMap:
+            name: screen-config

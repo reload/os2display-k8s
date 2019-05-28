@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin
+  labels:
+    app: admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin
+  template:
+    metadata:
+      labels:
+        app: admin
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/admin/configmap.yaml") . | sha256sum }}
+    spec:
+      hostAliases:
+        - ip: "127.0.0.1"
+          hostnames:
+            - "admin-php"
+      containers:
+      - name: admin-php
+        image: {{ .Values.images.adminPhp.image }}:{{ .Values.images.adminPhp.tag }}
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: release
+          mountPath: /var/www
+        - name: config
+          mountPath: /var/www/admin/app/config/parameters.yml
+          subPath: parameters.yml
+        - name: uploads
+          mountPath: /var/www/admin/web/uploads
+        env:
+          - name: APP_ENV
+            value: "prod"
+          - name: APP_DEBUG
+            value: "0"
+      - name: admin-nginx
+        image: {{ .Values.images.adminNginx.image }}:{{ .Values.images.adminNginx.tag }}
+        imagePullPolicy: Always
+        volumeMounts:
+          - name: config
+            mountPath: /etc/nginx/sites-enabled/admin.conf
+            subPath: admin.conf
+          - name: release
+            mountPath: /var/www
+          - name: uploads
+            mountPath: /var/www/admin/web/uploads
+        ports:
+          - name: main-port
+            containerPort: 80
+        env:
+          - name: APP_ENV
+            value: "prod"
+          - name: APP_DEBUG
+            value: "0"
+      - name: admin-cron
+        image: {{ .Values.images.adminPhp.image }}:{{ .Values.images.adminPhp.tag }}
+        imagePullPolicy: Always
+        command: ['/usr/local/bin/jobber-entrypoint.sh']
+        volumeMounts:
+        - name: release
+          mountPath: /var/www
+        - name: config
+          mountPath: /var/www/admin/app/config/parameters.yml
+          subPath: parameters.yml
+        - name: uploads
+          mountPath: /var/www/admin/web/uploads
+        ports:
+        - name: fpm-port
+          containerPort: 9000
+        env:
+          - name: APP_ENV
+            value: "prod"
+          - name: APP_DEBUG
+            value: "0"
+      initContainers:
+      - name: init-copy-source
+        image: {{ .Values.images.adminRelease.image }}:{{ .Values.images.adminRelease.tag }}
+        imagePullPolicy: Always
+        command: ['sh', '-c', '/opt/init-copy-source.sh; test -d /uploads/media || mkdir /uploads/media; chown -R www-data:www-data /uploads']
+        volumeMounts:
+        - name: release
+          mountPath: /release
+        - name: uploads
+          mountPath: /uploads
+      volumes:
+        - name: release
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: admin-config
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: uploads-claim

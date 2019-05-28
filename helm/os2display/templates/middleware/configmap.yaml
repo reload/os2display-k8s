@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: middleware-config
+data:
+  apikeys.json: |
+    {
+      {{ quote .Values.os2display.middleware.mainApiKey }}: {
+        "name": "AdminMiddleware",
+        "backend": "http://admin",
+        "expire": 300
+      }
+    }
+  config.json: |
+    {
+      "port": 3020,
+      "secret": {{ quote .Values.os2display.middleware.secret }},
+      "logs": {
+        "mode": "console-json"
+      },
+      "admin": {
+        "username": {{ quote .Values.os2display.middleware.username }},
+        "password": {{ quote .Values.os2display.middleware.password }}
+      },
+      "cache": {
+        "port": "6379",
+        "host": "redis",
+        "auth": null,
+        "db": 0
+      },
+      "apikeys": "apikeys.json"
+    }

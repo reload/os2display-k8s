@@ -1,0 +1,60 @@
+{{- $adminUser := printf "admin-%s" (randAlphaNum 5) -}}
+{{- $adminPass := randAlphaNum 10 -}}
+
+{{- if .Release.IsInstall }}
+OS2display has been installed in the namespace {{ .Release.Namespace }}
+
+You should now do an initial database migration, create an admin user and init the search index by issuing the following command:
+
+kubectl exec \
+  --namespace={{ .Release.Namespace }} \
+  -ti \
+  --container=admin-php \
+  $(kubectl get pods --namespace={{ .Release.Namespace }} --selector=app=admin -o jsonpath='{.items[0].metadata.name}') \
+  tools/init-environment.sh <admin username> <admin email> <admin password> {{ quote .Values.os2display.search.searchApikey }} {{ quote .Values.os2display.search.searchIndex }}  
+
+Eg.
+
+kubectl exec \
+  --namespace={{ .Release.Namespace }} \
+  -ti \
+  --container=admin-php \
+  $(kubectl get pods --namespace={{ .Release.Namespace }} --selector=app=admin -o jsonpath='{.items[0].metadata.name}') \
+  tools/init-environment.sh {{ $adminUser }} admin@example.com {{ $adminPass }} {{ quote .Values.os2display.search.searchApikey }} {{ quote .Values.os2display.search.searchIndex }}  
+{{- else }}
+OS2display has been upgraded.
+{{- end }}
+
+Image versions
+  * adminPhp: {{ .Values.images.adminPhp.tag }}
+  * adminNginx: {{ .Values.images.adminNginx.tag }}
+  * adminRelease: {{ .Values.images.adminRelease.tag }}
+  * screen: {{ .Values.images.screen.tag }}
+  * search: {{ .Values.images.search.tag }}
+  * middleware: {{ .Values.images.middleware.tag }}
+  * elasticsearch: {{ .Values.images.elasticsearch.tag }}
+  * redis: {{ .Values.images.redis.tag }}
+
+URls and credentials:
+
+Admin:
+  * URL: {{ if .Values.ingress.admin }} {{- .Values.os2display.admin.publicUrl -}} {{- else -}} no public url {{ end }}
+  {{- if .Release.IsInstall }} 
+  * Suggested credentials: {{ $adminUser }} / {{ $adminPass }} 
+  {{- end }}
+
+Screen:
+  * URL: {{ if .Values.ingress.screen }} {{- .Values.os2display.screen.publicUrl -}} {{- else -}} no public url {{ end }}
+
+Search:
+  * URL: {{ if .Values.ingress.search }} {{- .Values.os2display.search.publicUrl -}} {{- else -}} no public url {{ end }}
+  * Credentials: {{ .Values.os2display.search.username }} / {{ .Values.os2display.search.password }}
+
+Middleware 
+  * URL: (no public url)
+  * Credentials {{ .Values.os2display.middleware.username }} / {{ .Values.os2display.middleware.password }}
+
+{{- if and .Release.IsInstall (or .Values.ingress.admin .Values.ingress.screen .Values.ingress.search)}}
+
+Notice: you may get https warnings for a couple of minutes until the certificates has been provisioned from Let's Encrypt.
+{{- end }}

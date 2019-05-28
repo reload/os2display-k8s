@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  admin-db
+spec:
+  selector:
+    app:  admin-db
+  type: ClusterIP
+  ports:
+  - name:  main-port
+    port:  3306
+    targetPort:  main-port

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-db
+  labels:
+    app: admin-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-db
+  template:
+    metadata:
+      labels:
+        app: admin-db
+    spec:
+      containers:
+      - image: mariadb:10.3
+        imagePullPolicy: Always
+        name: admin-db
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: root
+          - name: MYSQL_DATABASE
+            value: os2display
+          - name: MYSQL_USER
+            value: os2display
+          - name: MYSQL_PASSWORD
+            value: os2display
+        volumeMounts:
+          - name: datadir
+            mountPath: /var/lib/mysql
+        livenessProbe:
+          exec:
+            command: ["sh", "-c", "exec mysqladmin status -uroot -p$MYSQL_ROOT_PASSWORD"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command: ["sh", "-c", "exec mysqladmin status -uroot -p$MYSQL_ROOT_PASSWORD"]
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        ports:
+        - name: main-port
+          containerPort: 3306
+      volumes:
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: datadir-claim

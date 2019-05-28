@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - image: {{ .Values.images.redis.image }}:{{ .Values.images.redis.tag }}
+        imagePullPolicy: Always
+        name: redis
+        ports:
+        - name: main-port
+          containerPort: 6379
+        volumeMounts:
+          - name: redis-data
+            mountPath: /data
+      initContainers:
+        - name: fix-permissions
+          image: {{ .Values.images.redis.image }}:{{ .Values.images.redis.tag }}
+          command: ["sh", "-c", "chown -R redis:redis /data"]
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis-data-claim

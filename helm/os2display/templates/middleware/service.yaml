@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  middleware
+spec:
+  selector:
+    app:  middleware
+  type:  ClusterIP
+  ports:
+  - name:  main-port
+    port:  3020
+    targetPort:  main-port

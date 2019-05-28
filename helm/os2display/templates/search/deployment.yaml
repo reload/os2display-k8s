@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search
+  labels:
+    app: search
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: search
+  template:
+    metadata:
+      labels:
+        app: search
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/search/configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+      - image: {{ .Values.images.search.image }}:{{ .Values.images.search.tag }}
+        imagePullPolicy: Always
+        name: search
+        ports:
+        - name: main-port
+          containerPort: 3010
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", 'rm -f /home/app/search_node/config.json && ln -s /search-config/config.json /home/app/search_node/config.json && rm -f /home/app/search_node/apikeys.json && ln -s /search-config/apikeys.json /home/app/search_node/apikeys.json && rm -f /home/app/search_node/mappings.json && ln -s /search-config/mappings.json /home/app/search_node/mappings.json']
+        volumeMounts:
+          - name: search-config
+            mountPath: /search-config
+      volumes:
+        - name: search-config
+          configMap:
+            name: search-config

@@ -1,0 +1,22 @@
+{{- if .Values.ingress.screen }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: screen-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    certmanager.k8s.io/cluster-issuer: {{ quote .Values.os2display.general.certmanagerIssuer }}
+spec:
+  rules:
+    - host: {{ quote .Values.os2display.screen.publicDomain }}
+      http:
+        paths:
+          - backend:
+              serviceName: screen
+              servicePort: main-port
+            path: /
+  tls:
+    - hosts:
+        - {{ quote .Values.os2display.screen.publicDomain }}
+      secretName: screen-ingress-cert # cert-manager will populate this.
+{{- end }}

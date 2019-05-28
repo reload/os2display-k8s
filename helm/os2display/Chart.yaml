@@ -1,0 +1,11 @@
+apiVersion: v1
+name: os2display
+version: 0.9.0
+description: An Open Source digital signage solution.
+home: https://os2.eu/produkt/os2display
+sources:
+  - https://github.com/reload/os2display-chart
+  - https://github.com/os2display
+maintainers:
+  - name: Mads H. Danquah
+    email: mads@reload.dk

@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  search
+spec:
+  selector:
+    app:  search
+  type:  ClusterIP
+  ports:
+  - name:  main-port
+    port:  3010
+    targetPort:  main-port

@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  screen
+spec:
+  selector:
+    app:  screen
+  type:  ClusterIP
+  ports:
+  - name:  main-port
+    port:  80
+    targetPort:  main-port

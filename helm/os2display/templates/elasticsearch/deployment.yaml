@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+  labels:
+    app: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+      - name: elasticsearch
+        image: {{ .Values.images.elasticsearch.image }}:{{ .Values.images.elasticsearch.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: main-port
+          containerPort: 9200
+        volumeMounts:
+          - name: esdata
+            mountPath: /var/lib/elasticsearch
+        readinessProbe:
+          httpGet:
+            path: /_cluster/health
+            port: main-port
+          initialDelaySeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /_cluster/health?local=true
+            port: main-port
+          initialDelaySeconds: 20
+      initContainers:
+        - name: fix-permissions
+          image: {{ .Values.images.elasticsearch.image }}:{{ .Values.images.elasticsearch.tag }}
+          command: ["sh", "-c", "chown -R elasticsearch:elasticsearch /var/lib/elasticsearch"]
+          volumeMounts:
+            - name: esdata
+              mountPath: /var/lib/elasticsearch
+      volumes:
+        - name: esdata
+          persistentVolumeClaim:
+            claimName: esdata-claim

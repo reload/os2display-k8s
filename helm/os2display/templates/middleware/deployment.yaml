@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: middleware
+  labels:
+    app: middleware
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: middleware
+  template:
+    metadata:
+      labels:
+        app: middleware
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/middleware/configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+      - image: {{ .Values.images.middleware.image }}:{{ .Values.images.middleware.tag }}
+        imagePullPolicy: Always
+        name: middleware
+        ports:
+        - name: main-port
+          containerPort: 3020
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", 'rm -f /home/app/middleware/config.json && ln -s /middleware-config/config.json /home/app/middleware/config.json && rm -f /home/app/middleware/apikeys.json && ln -s /middleware-config/apikeys.json /home/app/middleware/apikeys.json']
+        volumeMounts:
+          - name: middleware-config
+            mountPath:  /middleware-config
+
+      volumes:
+        - name: middleware-config
+          configMap:
+            name: middleware-config

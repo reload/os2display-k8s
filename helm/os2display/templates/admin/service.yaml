@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  admin
+spec:
+  selector:
+    app:  admin
+  type:  ClusterIP
+  ports:
+  - name:  main-port
+    port:  80
+    targetPort:  main-port

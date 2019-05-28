@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: search-config
+data:
+  apikeys.json: |
+    {
+      {{ quote .Values.os2display.search.searchApikey }}: {
+        "name": "AdminSearchIndex",
+        "expire": 300,
+        "indexes": [
+          {{ quote .Values.os2display.search.searchIndex }}
+        ],
+        "access": "rw"
+      }
+    }
+  config.json: |
+    {
+      "port": 3010,
+      "secret": {{ quote .Values.os2display.search.secret }},
+      "admin": {
+        "username": {{ quote .Values.os2display.search.username }},
+        "password": {{ quote .Values.os2display.search.password }}
+      },
+      "logs": {
+        "mode": "console-json"
+      },
+      "search": {
+        "hosts": [ "elasticsearch:9200" ],
+        "mappings": "mappings.json"
+      },
+      "apikeys": "apikeys.json",
+      "sentryUrl": "https://xxx:xxx@app.getsentry.com/xxx"
+    }
+  mappings.json: |
+    {
+      {{ quote .Values.os2display.search.searchIndex }}: {
+        "name": "AdminSearchIndex",
+        "tag": "private",
+        "fields": [
+          {
+            "field": "title",
+            "type": "string",
+            "language": "da",
+            "country": "DK",
+            "default_analyzer": "string_index",
+            "default_indexer": "analyzed",
+            "sort": true,
+            "indexable": true,
+            "raw": false
+          },
+          {
+            "type": "string",
+            "country": "DK",
+            "language": "da",
+            "default_analyzer": "string_index",
+            "default_indexer": "analyzed",
+            "sort": true,
+            "indexable": true,
+            "raw": false,
+            "geopoint": false,
+            "field": "name"
+          }
+        ],
+        "dates": [ "created_at", "updated_at" ]
+      }
+    }

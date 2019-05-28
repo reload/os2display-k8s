@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: screen-config
+data:
+  config.js: |
+    /**
+     * Sets up the config for the app.
+     */
+    window.config = {
+      // Used to activate screen (rest API) and load resources.
+      "resource": {
+        "server": {{ printf "//%s/" .Values.os2display.screen.publicDomain | quote }},
+        "uri": 'proxy'
+      },
+      // Used by web-socket.
+      "ws": {
+        "server": {{ printf "%s/" .Values.os2display.screen.publicUrl | quote }}
+      },
+      // API key to use.
+      "apikey": {{ quote .Values.os2display.middleware.mainApiKey }},
+      // If cookie is secure it's only send over https.
+      "cookie": {
+        "secure": true
+      },
+      // Display debug messages.
+      "debug": false,
+      // Software version.
+      "version": {{ printf "%s - %s" .Release.Namespace .Values.images.screen.tag | quote }},
+      // itkLog configuration.
+      "itkLog": {
+        "version": {{ printf "%s - %s" .Release.Namespace .Values.images.screen.tag | quote }},
+        "errorCallback": null,
+        "logToConsole": true,
+        "logLevel": "all"
+      },
+      // Fallback image url, (null = default), else set to "assets/images/fallback_override.png" and add the image
+      fallback_image: null
+    };

@@ -1,0 +1,126 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: admin-config
+data:
+  parameters.yml: |
+    parameters:
+        database_driver: pdo_mysql
+        database_host: admin-db
+        database_port: 3306
+        database_name: os2display
+        database_user: os2display
+        database_password: os2display
+        database_server_version: 5.5
+        mailer_transport: smtp
+        mailer_host: localhost
+        mailer_user: null
+        mailer_port: 25
+        mailer_password: null
+        mailer_from_email: {{ quote .Values.os2display.admin.mailerFromEmail }}
+        mailer_from_name: {{ quote .Values.os2display.admin.mailerFromName }}
+        locale: da
+        secret: {{ quote .Values.os2display.admin.secret }}
+        debug_toolbar: true
+        debug_redirects: false
+        use_assetic_controller: true
+        absolute_path_to_server: {{ quote .Values.os2display.admin.publicUrl }}
+        zencoder_api: ~
+        sharing_host: ~
+        sharing_path: ~
+        sharing_apikey: ~
+        sharing_enabled: false
+        search_host: 'http://search:3010'
+        search_host_public: {{ quote .Values.os2display.search.publicUrl }}
+        search_path: /api
+        search_apikey: {{ quote .Values.os2display.search.searchApikey }} 
+        search_index: {{ quote .Values.os2display.search.searchIndex }} 
+        middleware_host: 'http://middleware:3020'
+        middleware_path: /api
+        middleware_apikey: {{ quote .Values.os2display.middleware.mainApiKey }}
+        site_title: {{ printf "OS2display %s - %s" .Values.os2display.general.environmentName .Values.images.adminRelease.tag | quote }}
+        version: {{ printf "%s - %s" .Release.Namespace .Values.images.adminRelease.tag | quote }}
+        itk_log_version: 1
+        itk_log_error_callback: /api/error
+        itk_log_log_to_console: true
+        itk_log_log_level: all
+        search_filter_default: all
+
+  admin.conf: |+
+    server {
+      listen 80;
+
+      root /var/www/admin/web;
+
+      client_max_body_size 300m;
+      access_log /dev/stdout;
+      error_log /dev/stdout;
+      disable_symlinks off;
+
+      location / {
+        # try to serve file directly, fall back to Symfony.
+        try_files $uri @rewritesymfony;
+      }
+
+      location @rewritesymfony {
+        # rewrite all to app.php
+        rewrite ^(.*)$ /app.php/$1 last;
+      }
+
+      location ~ ^/(app|config)\.php(/|$) {
+        fastcgi_pass admin-php:9000;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param HTTPS off;
+
+        internal;
+      }
+
+      # deny access to .htaccess files, if Apache's document root
+      # concurs with nginx's one
+      location ~ /\.ht {
+        deny all;
+      }
+
+      location /bundles/ {
+        add_header 'Access-Control-Allow-Origin' "*";
+      }
+
+      location /proxy/ {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+
+        proxy_buffering off;
+
+        proxy_pass http://nodejs_search/;
+        proxy_redirect off;
+      }
+
+      location /socket.io/ {
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_pass http://nodejs_search;
+      }
+
+      # return 404 for all other php files not matching the front controller
+      # this prevents access to other php files you don't want to be accessible.
+      location ~ \.php$ {
+        return 404;
+      }
+    }
+
+    upstream nodejs_middleware {
+      server middleware:3020;
+    }
+
+    upstream nodejs_search {
+      server search:3010;
+    }

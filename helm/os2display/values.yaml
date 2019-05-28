@@ -1,0 +1,69 @@
+# What to expose, you normally just want all of these enabled for cloud 
+# environments. Could be disabled in local environments without Ingress-
+# controllers.
+ingress:
+  admin: true
+  screen: true
+  search: true
+
+# Docker image configuration
+images:
+  adminRelease:
+    image: reload/os2disp-admin-release
+    tag: os2disp-build-1
+  adminPhp:
+    image: reload/os2disp-admin-php
+    tag: os2disp-0.1.0
+  adminNginx:
+    image: reload/os2disp-admin-nginx
+    tag: os2disp-0.1.0
+  screen:
+    image: reload/os2disp-screen
+    tag: 5.0.3-os2disp-0.1.0
+  search:
+    image: reload/os2disp-search
+    tag: 2.1.10-docker-compatibility-2-os2disp-0.1.0
+  middleware:
+    image: reload/os2disp-middleware
+    tag: 5.0.2-console-json-logging-2-os2disp-0.1.0
+  elasticsearch:
+    image: reload/os2disp-elasticsearch
+    tag: 1.7.1-os2disp-0.1.0
+  redis:
+    image: reload/os2disp-redis
+    tag: 4.0.9-os2disp-0.1.0
+
+# Application configuration
+os2display:
+  general:
+    certmanagerIssuer: "letsencrypt-prod"
+    # Mainly used for generating the site-title for the admin-backend.
+    environmentName: ""
+
+  admin:
+    mailerFromEmail: "admin@example.com"
+    mailerFromName: "OS2Display Admin"
+    secret: "<insert-random-string-here>"
+    publicDomain: "admin.example.com"
+    publicUrl: "https://admin.example.com"
+
+  search:
+    publicUrl: "https://search.example.com"
+    secret: "<insert-random-string-here>"
+    searchApikey: "searchapikey"
+    searchIndex: "mainsearchindex"
+    username: "admin"
+    password: "<insert-admin-password-here>"
+    publicDomain: "search.example.com"
+
+  middleware:
+    mainApiKey: "middleware-main-api-key"
+    secret: "<insert-random-string-here>"
+    username: "admin"
+    password: "<insert-admin-password-here>"
+
+  screen:
+      publicDomain: "screen.example.com"
+      publicUrl: "https://screen.example.com"
+
+

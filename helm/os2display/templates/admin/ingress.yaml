@@ -1,0 +1,23 @@
+{{- if .Values.ingress.admin }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: admin-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: 500m
+    certmanager.k8s.io/cluster-issuer: {{ quote .Values.os2display.general.certmanagerIssuer }}
+spec:
+  rules:
+    - host: {{ quote .Values.os2display.admin.publicDomain}}
+      http:
+        paths:
+          - backend:
+              serviceName: admin
+              servicePort: main-port
+            path: /
+  tls:
+    - hosts:
+        - {{ quote .Values.os2display.admin.publicDomain}}
+      secretName: admin-ingress-cert # cert-manager will populate this.
+{{- end }}
