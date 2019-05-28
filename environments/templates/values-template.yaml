@@ -1,0 +1,24 @@
+# Docker image configuration
+images:
+  adminRelease:
+    image: reload/os2disp-admin-release
+    tag: re-build-$ADMIN_RELEASE_NUMBER
+
+# Application configuration
+os2display:
+  general:
+    environmentName: $ENVIRONMENT
+
+  admin:
+    publicDomain: "$ENVIRONMENT.admin.os2display.reload.dk"
+    publicUrl: "https://$ENVIRONMENT.admin.os2display.reload.dk"
+    mailerFromEmail: "admin-$ENVIRONMENT@example.com"
+    mailerFromName: "OS2Display $ENVIRONMENT Admin"
+
+  screen:
+    publicDomain: "$ENVIRONMENT.screen.os2display.reload.dk"
+    publicUrl: "https://$ENVIRONMENT.screen.os2display.reload.dk"
+
+  search:
+    publicDomain: "$ENVIRONMENT.search.os2display.reload.dk"
+    publicUrl: "https://$ENVIRONMENT.search.os2display.reload.dk"
