@@ -9,28 +9,28 @@ ingress:
 # Docker image configuration
 images:
   adminRelease:
-    image: reload/os2disp-admin-release
+    image: reload/os2display-admin-release
     tag: os2disp-build-1
   adminPhp:
-    image: reload/os2disp-admin-php
+    image: reload/os2display-admin-php
     tag: os2disp-0.1.0
   adminNginx:
-    image: reload/os2disp-admin-nginx
+    image: reload/os2display-admin-nginx
     tag: os2disp-0.1.0
   screen:
-    image: reload/os2disp-screen
+    image: reload/os2display-screen
     tag: 5.0.3-os2disp-0.1.0
   search:
-    image: reload/os2disp-search
+    image: reload/os2display-search
     tag: 2.1.10-docker-compatibility-2-os2disp-0.1.0
   middleware:
-    image: reload/os2disp-middleware
+    image: reload/os2display-middleware
     tag: 5.0.2-console-json-logging-2-os2disp-0.1.0
   elasticsearch:
-    image: reload/os2disp-elasticsearch
+    image: reload/os2display-elasticsearch
     tag: 1.7.1-os2disp-0.1.0
   redis:
-    image: reload/os2disp-redis
+    image: reload/os2display-redis
     tag: 4.0.9-os2disp-0.1.0
 
 # Application configuration

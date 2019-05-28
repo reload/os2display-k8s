@@ -39,11 +39,11 @@ Use these steps to setup a new os2display environment. Each environment is conta
 ### Environment configuration
 First create the environment configuration using `./init.sh <environment-name> <admin-release-number>`
 ```bash
-# Create a staging environment using the re-build-8 release
+# Create a staging environment using the reload-build-8 release
 ./init staging 8
 ```
 
-See https://hub.docker.com/r/reload/os2disp-admin-release/tags for at list of available release numbers, you probably want the latest.
+See https://hub.docker.com/r/reload/os2display-admin-release/tags for at list of available release numbers, you probably want the latest.
 
 This creates a directory named after the environment and instantiates a values.yaml and a secrets.yaml file. The latter should never be committed. 
 
@@ -86,6 +86,31 @@ Then remove the namespace using `kubectl delete namespace os2display-[environmen
 ```bash
 kubectl delete namespace os2display-justtesting
 ```
+
+# Deploying a release
+
+## Build the images
+You need to build and push the release images first. Go to the [building a release page](https://github.com/kkos2/os2display-infrastructure/documentation/building-a-release.md) and follow the steps there if you haven't already.
+
+## Make sure you are set up
+Make sure you are setup to use Helm and `kubectl`. You should follow the steps [here](https://github.com/kkos2/os2display-hosting-environments/blob/master/README.md)
+
+## Do the deployment
+To deploy to an environment - for instance test, find the folder with the environment name and update the `tag` under `adminRelease` in `[env-dir]/values.yaml`.
+
+Then make sure you have the latest helm chart
+```bash
+helm repo update
+```
+
+Then invoke `./upgrade.sh <environment>`
+```bash
+# Upgrade the test environment
+./upgrade.sh test
+```
+That's it!
+
+Celebrate, then get back to work. 
 
 
 

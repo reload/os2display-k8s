@@ -1,8 +1,8 @@
 # Docker image configuration
 images:
   adminRelease:
-    image: reload/os2disp-admin-release
-    tag: re-build-$ADMIN_RELEASE_NUMBER
+    image: reload/os2display-admin-release
+    tag: reload-build-$ADMIN_RELEASE_NUMBER
 
 # Application configuration
 os2display:

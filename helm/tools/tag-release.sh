@@ -12,7 +12,7 @@ fi
 
 REQUESTED_TAG=$1
 CHART_SOURCE_TAG="chart-source-${REQUESTED_TAG}"
-CHART_DIR="${SCRIPT_DIR}/../helm-chart/os2display"
+CHART_DIR="${SCRIPT_DIR}/../os2display"
 
 set +e
 if  ! grep -q "version: ${REQUESTED_TAG}" "${CHART_DIR}/Chart.yaml" ; then
