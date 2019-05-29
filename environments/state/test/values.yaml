@@ -1,0 +1,24 @@
+# Docker image configuration
+images:
+  adminRelease:
+    image: reload/os2display-admin-release
+    tag: reload-build-1
+
+# Application configuration
+os2display:
+  general:
+    environmentName: test
+
+  admin:
+    publicDomain: "test.admin.os2display.reload.dk"
+    publicUrl: "https://test.admin.os2display.reload.dk"
+    mailerFromEmail: "admin-test@example.com"
+    mailerFromName: "OS2Display test Admin"
+
+  screen:
+    publicDomain: "test.screen.os2display.reload.dk"
+    publicUrl: "https://test.screen.os2display.reload.dk"
+
+  search:
+    publicDomain: "test.search.os2display.reload.dk"
+    publicUrl: "https://test.search.os2display.reload.dk"
