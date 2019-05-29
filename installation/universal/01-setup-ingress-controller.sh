@@ -10,8 +10,3 @@ helm install \
     --name nginx-ingress stable/nginx-ingress \
     --set rbac.create=true \
     --set controller.service.loadBalancerIP="${EXTERNAL_IP}"
-
-helm install \
-    --name cert-manager \
-    --namespace kube-system \
-    stable/cert-manager

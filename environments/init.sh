@@ -11,13 +11,14 @@ if [[ $# -lt 2 ]] ; then
 fi
 
 ENV=$1
+ENV_STATE_DIR="${SCRIPT_DIR}/state/${ENV}"
 ADMIN_RELEASE_NUMBER=$2
 TEMPLATES_PATH="${SCRIPT_DIR}/templates"
-VALUES_PATH="${ENV}/values.yaml"
-SECRETS_PATH="${ENV}/secrets.yaml"
+VALUES_PATH="${ENV_STATE_DIR}/values.yaml"
+SECRETS_PATH="${ENV_STATE_DIR}/secrets.yaml"
 
-if [[ -d "${ENV}" ]] ; then 
-  echo "The ${ENV} directory already exists, aborting init"
+if [[ -d "${ENV_STATE_DIR}" ]] ; then 
+  echo "The ${ENV_STATE_DIR} directory already exists, aborting init"
   exit 1
 fi
 
@@ -26,7 +27,7 @@ if ! [ -x "$(command -v envsubst)" ]; then
   exit 1
 fi
 
-mkdir "${ENV}"
+mkdir "${ENV_STATE_DIR}"
 
 export ENVIRONMENT=$ENV
 export ADMIN_SECRET=$(head /dev/urandom | tr -dc a-z0-9 | head -c50)

@@ -2,15 +2,19 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "${SCRIPT_DIR}"
+
 if [[ $# -eq 0 ]] ; then
     echo "Syntax: $0 <environment>"
     exit 1
 fi
 
 ENV=$1
+ENV_STATE_DIR="${SCRIPT_DIR}/state/${ENV}"
 RELEASE_NAME="os2display-${ENV}"
-VALUES_PATH="${ENV}/values.yaml"
-SECRETS_PATH="${ENV}/secrets.yaml"
+VALUES_PATH="${ENV_STATE_DIR}/values.yaml"
+SECRETS_PATH="${ENV_STATE_DIR}/secrets.yaml"
 CHART_PATH="os2display/os2display"  
 
 if [[ ! -f "${VALUES_PATH}" ]] ; then
