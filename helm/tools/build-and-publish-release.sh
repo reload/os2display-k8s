@@ -14,7 +14,7 @@ REQUESTED_TAG="$1"
 CHART_SOURCE_TAG="chart-source-${REQUESTED_TAG}"
 CHART_HOSTING_URL="https://reload.github.io/os2display-k8s"
 DESTINATION_BRANCH="gh-pages"
-BUILD_BASE_DIR="${SCRIPT_DIR}/../helm/build"
+BUILD_BASE_DIR="${SCRIPT_DIR}/../build"
 BUILD_SOURCE_DIR="${BUILD_BASE_DIR}/source"
 BUILD_DESTINATION_DIR="${BUILD_BASE_DIR}/pages"
 RELEASE_TAG="chart-release-${REQUESTED_TAG}"
@@ -91,7 +91,12 @@ git commit -m "Chart release ${REQUESTED_TAG}"
 git tag "${RELEASE_TAG}"
 git push origin "${DESTINATION_BRANCH}"
 
+cd "${SCRIPT_DIR}"
 rm -fr "${BUILD_BASE_DIR}"
 git worktree prune
+
+# One of the commands above leaves a branch behind it - get rid of it.
+# TODO - figure out why that branch appears ... something to do with worktree?
+git branch -D "${CHART_SOURCE_TAG}"
 
 echo "Chart ${REQUESTED_TAG} published"
