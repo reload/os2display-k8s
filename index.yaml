@@ -2,7 +2,22 @@ apiVersion: v1
 entries:
   os2display:
   - apiVersion: v1
-    created: 2019-05-31T15:39:38.539085+02:00
+    created: 2019-05-31T22:48:09.256489+02:00
+    description: An Open Source digital signage solution.
+    digest: a80eddb11a4b15573fd817ef52a78c1e2bb92fd1e8ade81acc4d5ebdbad794c3
+    home: https://os2.eu/produkt/os2display
+    maintainers:
+    - email: mads@reload.dk
+      name: Mads H. Danquah
+    name: os2display
+    sources:
+    - https://github.com/reload/os2display-chart
+    - https://github.com/os2display
+    urls:
+    - https://reload.github.io/os2display-k8s/helm/os2display-0.9.1.tgz
+    version: 0.9.1
+  - apiVersion: v1
+    created: 2019-05-31T22:48:09.255955+02:00
     description: An Open Source digital signage solution.
     digest: bb84caf29292229a68f1a2164ebdafdaab53151ff7fff2dbe7bb28228edf9b1a
     home: https://os2.eu/produkt/os2display
@@ -16,4 +31,4 @@ entries:
     urls:
     - https://reload.github.io/os2display-k8s/helm/os2display-0.9.0.tgz
     version: 0.9.0
-generated: 2019-05-31T15:39:38.538324+02:00
+generated: 2019-05-31T22:48:09.254916+02:00
