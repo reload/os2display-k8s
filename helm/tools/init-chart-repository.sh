@@ -28,3 +28,5 @@ git add index.yaml
 git commit -a -m "Initial chart repo commit"
 git push origin ${CHART_BRANCH}
 git checkout master
+
+echo "Branch ${CHART_BRANCH} created, now go to to the settings for the github repository and set the branch as the github pages branch."

@@ -92,5 +92,6 @@ git tag "${RELEASE_TAG}"
 git push origin "${DESTINATION_BRANCH}"
 
 rm -fr "${BUILD_BASE_DIR}"
+git worktree prune
 
 echo "Chart ${REQUESTED_TAG} published"
