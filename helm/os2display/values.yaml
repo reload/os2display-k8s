@@ -13,7 +13,7 @@ images:
     tag: reload-build-1
   adminPhp:
     image: reload/os2display-admin-php
-    tag: reload-1.1.0
+    tag: reload-1.2.0
   adminNginx:
     image: reload/os2display-admin-nginx
     tag: reload-0.1.0

@@ -38,7 +38,7 @@ data:
         middleware_host: 'http://middleware:3020'
         middleware_path: /api
         middleware_apikey: {{ quote .Values.os2display.middleware.mainApiKey }}
-        site_title: {{ printf "OS2display %s - %s" .Values.os2display.general.environmentName .Values.images.adminRelease.tag | quote }}
+        site_title: {{ printf "%s - %s" .Values.os2display.general.environmentName .Values.images.adminRelease.tag | quote }}
         version: {{ printf "%s - %s" .Release.Namespace .Values.images.adminRelease.tag | quote }}
         itk_log_version: 1
         itk_log_error_callback: /api/error
