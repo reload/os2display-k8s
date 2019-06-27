@@ -52,9 +52,9 @@ spec:
           - name: main-port
             containerPort: 80
         env:
-          - name: APP_ENV
+          - name: SYMFONY_ENV
             value: "prod"
-          - name: APP_DEBUG
+          - name: SYMFONY_DEBUG
             value: "0"
       - name: admin-cron
         image: {{ .Values.images.adminPhp.image }}:{{ .Values.images.adminPhp.tag }}
@@ -72,9 +72,9 @@ spec:
         - name: fpm-port
           containerPort: 9000
         env:
-          - name: APP_ENV
+          - name: SYMFONY_ENV
             value: "prod"
-          - name: APP_DEBUG
+          - name: SYMFONY_DEBUG
             value: "0"
       initContainers:
       - name: init-copy-source
