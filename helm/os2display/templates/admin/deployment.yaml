@@ -33,9 +33,9 @@ spec:
         - name: uploads
           mountPath: /var/www/admin/web/uploads
         env:
-          - name: APP_ENV
+          - name: SYMFONY_ENV
             value: "prod"
-          - name: APP_DEBUG
+          - name: SYMFONY_DEBUG
             value: "0"
       - name: admin-nginx
         image: {{ .Values.images.adminNginx.image }}:{{ .Values.images.adminNginx.tag }}
