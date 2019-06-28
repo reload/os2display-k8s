@@ -90,6 +90,23 @@ spec:
           mountPath: /release
         - name: uploads
           mountPath: /uploads
+      - name: migrate-and-clear
+        image: {{ .Values.images.adminPhp.image }}:{{ .Values.images.adminPhp.tag }}
+        command: ['/usr/local/bin/migrate-entrypoint.sh']
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: release
+          mountPath: /var/www
+        - name: config
+          mountPath: /var/www/admin/app/config/parameters.yml
+          subPath: parameters.yml
+        - name: uploads
+          mountPath: /var/www/admin/web/uploads
+        env:
+          - name: SYMFONY_ENV
+            value: "prod"
+          - name: SYMFONY_DEBUG
+            value: "0"
       volumes:
         - name: release
           emptyDir: {}
