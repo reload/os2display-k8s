@@ -9,6 +9,10 @@ spec:
   selector:
     matchLabels:
       app: admin
+  # We may get Multi-Attach error for volume if we do not kill the old container
+  # entirely before creating a new one.
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
