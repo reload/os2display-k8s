@@ -17,6 +17,9 @@ images:
   adminNginx:
     image: reload/os2display-admin-nginx
     tag: reload-0.1.0
+  adminDb:
+    image: mariadb
+    tag: 10.3
   screen:
     image: reload/os2display-screen
     tag: 5.0.3-reload-0.1.1
