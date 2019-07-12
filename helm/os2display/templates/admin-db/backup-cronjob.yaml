@@ -1,4 +1,4 @@
-{{if eq .Values.adminDb.backup.enabled true}}
+{{if eq .Values.os2display.adminDb.backup.enabled true}}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
