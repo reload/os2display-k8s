@@ -12,9 +12,9 @@ spec:
       template:
         spec:
           volumes:
-            - name: google-cloud-key
-                secret:
-                secretName: db-backup-sa
+          - name: google-cloud-key
+            secret:
+              secretName: db-backup-sa
           restartPolicy: Never
           containers:
           - name: database-backup
