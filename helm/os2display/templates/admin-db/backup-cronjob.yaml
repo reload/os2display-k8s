@@ -37,18 +37,6 @@ spec:
               value: os2display
             - name: GS_URL
               value: {{ .Values.os2display.adminDb.backup.destinationUrl }}
-            - name: PATH
-              value: '/var/www/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: lb-db-user-pass
-                  key: drupaldbuser
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: lb-db-user-pass
-                  key: drupaldbpass
             volumeMounts:
             - name: google-cloud-key
               mountPath: /var/secrets/google
