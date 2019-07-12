@@ -1,0 +1,89 @@
+{{if eq .Values.adminDb.backup.enabled true}}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: database-backup
+spec:
+  schedule: {{ .Values.adminDb.backup.schedule }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: database-backup
+            image: {{ .Values.images.drupalPhpFpm.image }}:{{ .Values.images.drupalPhpFpm.tag }}
+            resources:
+              limits:
+                memory: 512Mi
+              requests:
+                memory: 256Mi
+            args:
+            - sh
+            - -c
+            {{- if eq .Release.Namespace "prod" }}
+            - cd /var/www/web ; drush --uri=https://admin.{{ .Values.app.general.domainSuffix }} core-cron
+            {{- else }}
+            - cd /var/www/web ; drush --uri=https://admin.{{ .Release.Namespace }}.{{ .Values.app.general.domainSuffix }} core-cron
+            {{- end}}
+            env:
+            - name: PLATFORM
+              value: k8s
+            - name: APP_NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: APP_DIR
+              value: {{ .Values.app.drupal.appDir }}
+            - name: APP_FILES_DIR
+              value: {{ .Values.app.drupal.appFilesDir }}
+            - name: APP_TMP_DIR
+              value: {{ .Values.app.drupal.appTmpDir }}
+            - name: PHP_MEMORY_LIMIT
+              value: "-1"
+            - name: PHP_SENDMAIL_PATH
+              value: {{ .Values.app.general.sendmailPath }}
+            - name: DB_HOSTNAME
+              value: {{ .Values.app.db.hostName }}
+            - name: DB_DATABASE
+              value: {{ .Values.app.db.database }}
+            - name: DB_PORT
+              value: {{ quote .Values.app.db.port }}
+            - name: REDIS_HOSTNAME
+              value: {{ .Values.app.redis.hostName }}.{{ .Release.Namespace }}.svc.cluster.local
+            - name: REDIS_PORT
+              value: {{ quote .Values.app.redis.port }}
+            - name: ELASTIC_HOSTNAME
+              value: {{ .Values.app.elastic.hostName }}.{{ .Release.Namespace }}.svc.cluster.local
+            - name: ELASTIC_PORT
+              value: {{ quote .Values.app.elastic.port }}
+            - name: PATH
+              value: '/var/www/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: lb-db-user-pass
+                  key: drupaldbuser
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lb-db-user-pass
+                  key: drupaldbpass
+            volumeMounts:
+            - name: release
+              mountPath: /var/www
+            - name: drupal-files
+              mountPath: /var/www/web/sites/default/files
+            - name: etc-ssmtp
+              mountPath: /etc/ssmtp
+          restartPolicy: Never
+          # Declare pod volumes.
+          volumes:
+            - name: release
+              emptyDir: {}
+            - name: etc-ssmtp
+              emptyDir: {}
+            - name: drupal-files
+              nfs:
+                server: nfs-server.{{ .Release.Namespace }}.svc.cluster.local
+                path: /drupal-files
+{{end}}

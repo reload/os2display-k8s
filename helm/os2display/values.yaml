@@ -20,6 +20,9 @@ images:
   adminDb:
     image: mariadb
     tag: 10.3
+  adminDbBackup:
+    image: reload/os2display-admin-db-backup
+    tag: 10.3-reload-1.0.0
   screen:
     image: reload/os2display-screen
     tag: 5.0.3-reload-0.1.1
@@ -68,5 +71,14 @@ os2display:
   screen:
       publicDomain: "screen.example.com"
       publicUrl: "https://screen.example.com"
+
+  adminDb:
+    backup:
+      enabled: false
+      # Type is currently not used as we only support google storage for now.
+      destinationType: "GoogleStorage"
+      destinationUrl: "gs://project/bucket"
+      # Daily at 04:02.
+      schedule: "2 4 * * *"
 
 
