@@ -50,6 +50,6 @@ spec:
                   name: lb-db-user-pass
                   key: drupaldbpass
             volumeMounts:
-            - name: db-backup-sa
+            - name: google-cloud-key
               mountPath: /var/secrets/google
 {{end}}
