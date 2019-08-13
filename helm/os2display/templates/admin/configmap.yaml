@@ -13,10 +13,10 @@ data:
         database_password: os2display
         database_server_version: 5.5
         mailer_transport: smtp
-        mailer_host: {{ .Values.os2display.admin.mailerHost }}
-        mailer_user: {{ .Values.os2display.admin.mailerUser }}
-        mailer_port: {{ quote .Values.os2display.admin.mailerPort }}
-        mailer_password: {{ quote .Values.os2display.admin.mailerPassword }}
+        mailer_host: {{- if .Values.os2display.admin.mailerHost }} {{ quote .Values.os2display.admin.mailerHost }} {{ else }} ~ {{ end }}
+        mailer_user: {{- if .Values.os2display.admin.mailerUser }} {{ quote .Values.os2display.admin.mailerUser }} {{ else }} ~ {{ end }}
+        mailer_port: {{- if .Values.os2display.admin.mailerPort }} {{ quote .Values.os2display.admin.mailerPort }} {{ else }} ~ {{ end }}
+        mailer_password: {{- if .Values.os2display.admin.mailerPassword }} {{ quote .Values.os2display.admin.mailerPassword }} {{ else }} ~ {{ end }}
         mailer_from_email: {{ quote .Values.os2display.admin.mailerFromEmail }}
         mailer_from_name: {{ quote .Values.os2display.admin.mailerFromName }}
         locale: da
