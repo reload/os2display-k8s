@@ -47,6 +47,10 @@ os2display:
     environmentName: ""
 
   admin:
+    mailerHost: "localhost"
+    mailerUser: null
+    mailerPort: "25"
+    mailerPassword: null
     mailerFromEmail: "admin@example.com"
     mailerFromName: "OS2Display Admin"
     secret: "<insert-random-string-here>"
