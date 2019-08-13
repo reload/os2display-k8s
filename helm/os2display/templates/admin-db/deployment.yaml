@@ -15,7 +15,7 @@ spec:
         app: admin-db
     spec:
       containers:
-      - image: mariadb:10.3
+      - image: {{ .Values.images.adminDb.image }}:{{ .Values.images.adminDb.tag }}
         imagePullPolicy: Always
         name: admin-db
         env:

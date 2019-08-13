@@ -1,0 +1,43 @@
+{{if eq .Values.os2display.adminDb.backup.enabled true}}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: database-backup
+spec:
+  schedule: {{ .Values.os2display.adminDb.backup.schedule }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+          - name: google-cloud-key
+            secret:
+              secretName: db-backup-sa
+          restartPolicy: Never
+          containers:
+          - name: database-backup
+            image: {{ .Values.images.adminDbBackup.image }}:{{ .Values.images.adminDbBackup.tag }}
+            resources:
+              limits:
+                memory: 512Mi
+              requests:
+                memory: 256Mi
+            env:
+            - name: AUTH_JSON
+              value: /var/secrets/google/key.json
+            - name: MYSQL_HOST
+              value: admin-db
+            - name: MYSQL_DATABASE
+              value: os2display
+            - name: MYSQL_USER
+              value: os2display
+            - name: MYSQL_PASSWORD
+              value: os2display
+            - name: GS_URL
+              value: {{ .Values.os2display.adminDb.backup.destinationUrl }}
+            volumeMounts:
+            - name: google-cloud-key
+              mountPath: /var/secrets/google
+{{end}}
