@@ -8,6 +8,7 @@
 #
 set -euo pipefail
 IFS=$'\n\t'
+SDK_DOCKER_IMAGE=google/cloud-sdk:latest
 
 # Setup a temporary volume that will hold the gcloud sdk / kubectl
 # authentication information.
@@ -24,7 +25,7 @@ function sdk_setup() {
       --rm\
       -v "${SDK_CONFIG_VOLUME}:/root/.config"\
       -v "${HOME}/.config:/populate/.config"\
-      google/cloud-sdk:latest\
+      ${SDK_DOCKER_IMAGE}\
       rsync -a /populate/.config/gcloud /root/.config/ --exclude logs > /dev/null
     sdk gcloud container clusters get-credentials "${CLUSTER_NAME}" > /dev/null
 }
@@ -38,7 +39,7 @@ function cleanup() {
     
     echo # newline
     echo "Manual deletion/cleanup instructions"
-    if [[ ! -z "${SUCCESS:-}" ]] ; then
+    if [[ -z "${SUCCESS:-}" ]] ; then
         echo "Be aware that as the script failed, some resources may not have been created."
     fi
     echo "  gcloud iam service-accounts delete -q ${SERVICE_ACCOUNT_FQN}"
@@ -52,7 +53,7 @@ function sdk() {
       --rm\
       --volume "${KUBE_CONFIG_VOLUME}:/root/.kube"\
       --volume "${SDK_CONFIG_VOLUME}:/root/.config"\
-      google/cloud-sdk:latest\
+      ${SDK_DOCKER_IMAGE}\
       "$@"
 }
 

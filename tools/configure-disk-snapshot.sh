@@ -8,6 +8,7 @@
 #
 set -euo pipefail
 IFS=$'\n\t'
+SDK_DOCKER_IMAGE=google/cloud-sdk:latest
 
 # Setup a temporary volume that will hold the gcloud sdk / kubectl
 # authentication information.
@@ -22,7 +23,7 @@ function sdk_setup() {
       --rm\
       -v "${SDK_CONFIG_VOLUME}:/root/.config"\
       -v "${HOME}/.config:/populate/.config"\
-      google/cloud-sdk:latest\
+      ${SDK_DOCKER_IMAGE}\
       rsync -a /populate/.config/gcloud /root/.config/ --exclude logs > /dev/null
 }
 
@@ -38,7 +39,7 @@ function sdk() {
     docker run \
       --rm\
       --volume "${SDK_CONFIG_VOLUME}:/root/.config"\
-      google/cloud-sdk:latest\
+      ${SDK_DOCKER_IMAGE}\
       "$@"
 }
 
@@ -80,8 +81,7 @@ echo # newline
 # TODO - detect existing schedule
 if ! sdk gcloud beta compute resource-policies describe --region "${LOCATION}" "${SCHEDULE_NAME}" &> /dev/null ; then
     echo "* Creating daily disk snapshot schedule in ${PROJECT}"
-    # TODO switch to "create snapshot-schedule" when we go to version 253 of the sdk
-    sdk gcloud beta compute resource-policies create-snapshot-schedule "${SCHEDULE_NAME}" \
+    sdk gcloud beta compute resource-policies create snapshot-schedule "${SCHEDULE_NAME}" \
         --description "Daily disk snapshot, 10 day rentention" \
         --max-retention-days 10 \
         --start-time 03:00 \
@@ -100,6 +100,3 @@ sdk gcloud beta compute disks add-resource-policies "${DISK_NAME}" \
 
 echo #newline
 echo "Success"
-
-# Signal cleanup() that we're good.
-SUCCESS=1
