@@ -11,6 +11,8 @@ kubectl create -f ./helm-rbac/
 # Perform the init using the newly created account.
 helm init --service-account tiller
 
+# Add ingress-nginx repo
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx/
+
 # Update Helm repo before we return
 helm repo update
-
