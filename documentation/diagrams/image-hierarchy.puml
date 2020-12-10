@@ -1,0 +1,32 @@
+@startuml
+
+artifact main_base as "ubuntu:18.04" #AliceBlue
+artifact docker_base as "docker-base" #AliceBlue
+artifact nginx_base as "nginx-base"  #AliceBlue
+artifact node_base as "node-base" #AliceBlue
+artifact php_base as "php-base" #AliceBlue
+artifact admin_nginx as "admin-nginx"
+artifact admin_php as "admin-php"
+artifact admin_release as "admin-release"
+artifact elasticsearch
+artifact middleware
+artifact redis
+artifact search
+artifact screen
+artifact admin_db as "admin-db (mariadb)"
+
+docker_base <-- main_base
+nginx_base <-- docker_base
+node_base <-- docker_base
+php_base <-- docker_base
+
+screen <-- docker_base
+admin_nginx <-- nginx_base
+admin_php <-- php_base
+elasticsearch <-- docker_base
+search <-- node_base
+middleware <-- node_base
+admin_release <-- php_base
+redis <-- docker_base
+
+@enduml

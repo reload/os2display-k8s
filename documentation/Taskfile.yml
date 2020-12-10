@@ -1,0 +1,25 @@
+version: '3'
+
+vars:
+  PLANTUML_RENDERER_VERSION: 1.2020.15-01
+  
+tasks:
+  docker-build:
+    cmds:
+      - docker build -t plantuml-renderer .
+
+  render:
+    desc: Full render of all diagrams
+    cmds:
+      - task: render:plantuml
+
+  render:plantuml:
+    desc: Render plantuml diagrams
+    deps: [docker-build]
+    cmds:
+      - |
+        docker run \
+          -v "${PWD}/diagrams/:/checkout" \
+          -w "/checkout" \
+          plantuml-renderer \
+          -verbose -tpng -o render-png *.puml
