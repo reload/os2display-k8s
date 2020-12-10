@@ -15,5 +15,7 @@ helm upgrade \
     --namespace ingress-nginx \
     --set rbac.create=true \
     --set controller.kind=DaemonSet \
+    --set controller.publishService.enabled=true \
     --set controller.service.loadBalancerIP="${EXTERNAL_IP}" \
-    ingress-nginx ingress-nginx/ingress-nginx
+    ingress-nginx \
+    ingress-nginx/ingress-nginx

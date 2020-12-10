@@ -1,15 +1,17 @@
-apiVersion: certmanager.k8s.io/v1alpha1
+apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
 spec:
   acme:
     # The ACME server URL
-    server: https://acme-v02.api.letsencrypt.org/directory
-    # Email address used for ACME registration
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
     email: $LETSENCRYPT_EMAIL
-    # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
+      # Secret resource that will be used to store the account's private key.
       name: letsencrypt-prod
-    # Enable HTTP01 validations
-    http01: {}
+    # Add a single challenge solver, HTTP01 using nginx
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
